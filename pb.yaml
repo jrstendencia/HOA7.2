@@ -1,0 +1,17 @@
+---
+- hosts: all
+  become: true
+  tasks:
+
+  - name: Search for log files
+    find:
+      paths: /var/log/
+      patterns: '*.log'
+    register: log_files
+
+  - name: Collect log files and copy from cnode to mnode
+    fetch:
+      src: "{{ item.path }}"
+      dest: /tmp/logs/
+      flat: yes
+    with_items: "{{ log_files.files }}"
